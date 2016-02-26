@@ -4,8 +4,9 @@ MyDirInfo = dir(str);
 fieldname='name';
 pos=3;
 filenames= cell(max(size(MyDirInfo))-2,1);
+maximo=max(size(MyDirInfo));
 while(1)
-    if(pos>max(size(MyDirInfo)))
+    if(pos>maximo)
         break;
     end;
     filenames{pos-2}=[MyDirInfo(pos).(fieldname)];
@@ -18,8 +19,9 @@ ColorFilesNames= cell(max(size(filenames)),1);
 DepthFilesNames= cell(max(size(filenames)),1);
 posColor=1;
 posDepth=1;
+maximo=max(size(filenames));
 while(1)
-    if(pos>max(size(filenames)))
+    if(pos>maximo)
         break;
     end;
     k = strfind(filenames{pos}, 'Color');
