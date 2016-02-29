@@ -1,6 +1,6 @@
 clc;
 clear;
-%close all;
+close all;
 tic
 %% Select folder and pair images with depth
 s1 = strcat(uigetdir('D:\INESC\DadosTese\','Select Patient'),'\Kinect1\');
@@ -19,7 +19,7 @@ for i=1:tamanho
     %disp(i);
     c=textscan(names{i},'%s');
     str=c{1};
-    [x,lvle,y,lvld,l,a]=getPos(strcat(s1,str{2}));
+    [x,lvle,y,lvld,l,h]=getPos(strcat(s1,str{2}));
     
     img=imread(strcat(s1,str{2}));
     img2=uint8(img./8);
@@ -27,11 +27,103 @@ for i=1:tamanho
     figure(2);
     imshow(img3);
     
-%     pause(0.066);
+%%
     figure(3);
     [counts,r] = imhist(img3);
     stem(r,counts);
+    a=1;
+    for posi=1:256
+        if(counts(posi)>0)
+            a=posi-1;
+            break;
+        end
+    end
+    
+    
+    [M,N]=size(img3);
+    img4=zeros(M,N);
+    for u=1:M
+        for v=1:N
+            if(img3(u,v)==a)
+                img4(u,v)=255;
+            end
+        end
+    end
+    
+    b=1;
+    for posi2=a+2:256
+        if(counts(posi2)>0)
+            b=posi2-1;
+            break;
+        end
+    end
+    img5=zeros(M,N);
+    for u=1:M
+        for v=1:N
+            if(img3(u,v)==b)
+                img5(u,v)=255;
+            end
+        end
+    end
+    conn=8;
+    [L, num] = bwlabel(img4, conn);
+    [L2, num2] = bwlabel(img5, conn);
+    
+    %figure(6);
+    %[counts,r] = imhist(L);
+%     subplot(2,3,1),imshow(img4);
+    %stem(r,counts);
+    %figure(7);
+    %[counts,r] = imhist(L);
+%     subplot(2,3,2),imshow(img5);
+    %stem(r,counts);
+%     subplot(2,3,3),
+    
+    area=zeros(num);
+    for r=1:num
+        area(r) = bwarea(L==r);
+    end
+    area=area(:,1);
+    [maxi,I] = max(area);
+    img4=zeros(M,N);
+    for u=1:M
+        for v=1:N
+            if(L(u,v)==I)
+                img4(u,v)=255;
+            end
+        end
+    end
+    area2=zeros(num2);
+    for r=1:num2
+        area2(r) = bwarea(L2==r);
+    end
+    area2=area2(:,1);
+    [maxi2,I2] = max(area2);
+    img5=zeros(M,N);
+    for u=1:M
+        for v=1:N
+            if(L2(u,v)==I2)
+                img5(u,v)=255;
+            end
+        end
+    end
+%     figure(4);
+% %     subplot(2,3,4),
+%     imshow(img4);
+%     figure(5);
+% %     subplot(2,3,5),
+%     imshow(img5);
+%     
+%     figure(9);
+%     imshow(L);
+%     figure(10);
+%     imshow(L2);
+
+    figure(6);
+    imshow(uint8((img4*(3/4))+(img5*(1/4))));
     pause(0.066);
+
+    %%
     x1=x;
     x2=l-y;
     w=y-x;
