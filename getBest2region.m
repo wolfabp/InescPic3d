@@ -3,6 +3,7 @@ function [img4,img5] = getBest2region(img3)
     [counts,r] = imhist(img3);
     stem(r,counts);
     a=1;
+    %get closest region
     for posi=1:256
         if(counts(posi)>0)
             a=posi-1;
@@ -21,6 +22,7 @@ function [img4,img5] = getBest2region(img3)
     end
     
     b=1;
+    %get 2º closest region
     for posi2=a+2:256
         if(counts(posi2)>0)
             b=posi2-1;
@@ -36,10 +38,12 @@ function [img4,img5] = getBest2region(img3)
         end
     end
     
+    %label regions
     conn=8;
     [L, num] = bwlabel(img4, conn);
     [L2, num2] = bwlabel(img5, conn);
     
+    %get biggest area in img4
     area=zeros(num);
     for r=1:num
         area(r) = bwarea(L==r);
@@ -54,6 +58,8 @@ function [img4,img5] = getBest2region(img3)
             end
         end
     end
+    
+    %get biggest area in img5
     area2=zeros(num2);
     for r=1:num2
         area2(r) = bwarea(L2==r);
