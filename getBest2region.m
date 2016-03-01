@@ -1,7 +1,7 @@
 function [img4,img5] = getBest2region(img3)
-    figure(3);
+%     figure(3);
     [counts,r] = imhist(img3);
-    stem(r,counts);
+%     stem(r,counts);
     a=1;
     %get closest region
     for posi=1:256

@@ -30,9 +30,9 @@ for i=1:tamanho
     imshow(img3);
        
     [img4,img5] = getBest2region(img3);
-    figure(6);
+     figure(6);
     img6=uint8((img4*(3/4))+(img5*(1/4)));
-    imshow(img6);
+     imshow(img6);
     img4=im2bw(img4);
     img5=im2bw(img5);
     s=regionprops(img4,'Orientation','Area','Centroid','ConvexArea','EulerNumber','Perimeter');
@@ -43,7 +43,7 @@ for i=1:tamanho
     centroid(i,2)=cent(2);
     orient(i,4)=s(1).ConvexArea;
     orient(i,5)=s(1).Perimeter;
-%     pause();
+    pause();
     %%
     x1=x;
     x2=l-y;
@@ -58,6 +58,7 @@ for i=1:tamanho
     valuesPosMetodo3(i,1)=abs(lvle-lvld);
     valuesPosMetodo3(i,2)=lvle;
     valuesPosMetodo3(i,3)=lvld;
+%     pause();
 end
 
 %% Select candidates from width
@@ -191,11 +192,7 @@ imshow(img3);
 toc
 
 figure(10);
-plot(1:1:tamanho,orient(:,1));
-axis([1 tamanho -90 90])
-figure(11);
-plot(1:1:tamanho,orient(:,2),'o-');
-axis([1 tamanho 0 inf])
+plotyy(1:1:tamanho,orient(:,1),1:1:tamanho,orient(:,2));
 % figure(11);
 % plotyy(1:1:tamanho,orient(:,5),1:1:tamanho,orient(:,4));
 figure(12);
