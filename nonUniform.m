@@ -20,7 +20,7 @@ regianSpace=(maxI/K);
 for i=1:K
     kClusters(i)=floor(regianSpace*i);
 end
-tamanho=max(size(counts));
+tamanho=max(size(counts))-1;
 clusters=zeros(tamanho,2);
 clusters(1:tamanho,1)=counts(1:tamanho);
 

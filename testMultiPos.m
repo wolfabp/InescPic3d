@@ -195,6 +195,12 @@ plot(1:1:tamanho,orient(:,1));
 axis([1 tamanho -90 90])
 figure(11);
 plot(1:1:tamanho,orient(:,2),'o-');
+hold;
+valormedio=mean(orient(:,2));
+arraymedio=zeros(tamanho);
+arraymedio(:)=valormedio;
+
+plot(1:1:tamanho,arraymedio);
 axis([1 tamanho 0 inf])
 % figure(11);
 % plotyy(1:1:tamanho,orient(:,5),1:1:tamanho,orient(:,4));
