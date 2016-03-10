@@ -21,8 +21,8 @@ for i=1:tamanho
     
     %change scale & seperate the body from 
     img2=uint8(img./8);
-    figure(10)
-    imshow(img2);
+%%%     figure(10)
+%%%     imshow(img2);
     level=graythresh(img2);
     imgnovo=im2bw(img2,level);
     imgnovo2=imgnovo*255;
@@ -34,12 +34,11 @@ for i=1:tamanho
 %%%     figure(11)
 %%%     imshow(img14);
     img3=nonUniform(img14,8,4);
-        figure(12)
-    imshow(img3);
-    pause();
+%         figure(12)
+%     imshow(img3);
 %     
-        figure(13);
-    stem(imhist(img3));
+%         figure(13);
+%     stem(imhist(img3));
 
     [img4,img5] = getBest2region(img3);
     img6=uint8((img4*(3/4))+(img5*(1/4)));
