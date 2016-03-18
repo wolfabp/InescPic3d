@@ -21,8 +21,8 @@ for i=1:tamanho
     
     %change scale & seperate the body from 
     img2=uint8(img./8);
-    figure(10)
-    imshow(img2);
+%     figure(10)
+%     imshow(img2);   
     level=graythresh(img2);
     imgnovo=im2bw(img2,level);
     imgnovo2=imgnovo*255;
@@ -33,13 +33,16 @@ for i=1:tamanho
         
 %%%     figure(11)
 %%%     imshow(img14);
+%      figure(73);
+%     stem(imhist(img14));
+    
     img3=nonUniform(img14,8,4);
-        figure(12)
-    imshow(img3);
-    pause();
+%         figure(12)
+%     imshow(img3);
 %     
-        figure(13);
-    stem(imhist(img3));
+%         figure(13);
+%     stem(imhist(img3));
+%     pause();
 
     [img4,img5] = getBest2region(img3);
     img6=uint8((img4*(3/4))+(img5*(1/4)));
@@ -91,21 +94,21 @@ plot(1:1:tamanho,arraymedio2);
 poslatesq=1;
 for i=1: tamanho
    if(measurements(i,2)>valormedio)
-       poslatesq=i;
+       poslatesq=i
        break;
    end
 end
 str=names{1,1}{poslatesq,1};
     figure(22);
 imshow(imread(strcat(s1,str)));
-    str=names{1,2}{poslatesq,1};
-    img=imread(strcat(s1,str));
-    img2=uint8(img./8);
-    img3 = nonUniform(img2,8,4);
-    figure(23);
-    imshow(img3);
-    figure(53);
-    stem(imhist(img3));
+%     str=names{1,2}{poslatesq,1};
+%     img=imread(strcat(s1,str));
+%     img2=uint8(img./8);
+%     img3 = nonUniform(img2,8,4);
+%     figure(23);
+%     imshow(img3);
+%     figure(53);
+%     stem(imhist(img3));
 poslatdir=1;
 for i=poslatesq: tamanho
     flag1=((measurements(i+1,2)<valormedio));
@@ -115,33 +118,33 @@ for i=poslatesq: tamanho
     flag5=((measurements(i+5,2)<valormedio));
     flagTotal=flag1+flag2+flag3+flag4+flag5;
    if((measurements(i-2,2)<valormedio) && flagTotal>4)
-       poslatdir=i-3;
+       poslatdir=i-3
        break;
    end
 end
 str=names{1,1}{poslatdir,1};
     figure(24);
 imshow(imread(strcat(s1,str)));
-    str=names{1,2}{poslatdir,1};
-    img=imread(strcat(s1,str));
-    img2=uint8(img./8);
-    img3 = nonUniform(img2,8,4);
-    figure(25);
-    imshow(img3);
-    figure(55);
-    stem(imhist(img3));
-posfrontal=floor(((poslatdir)+(poslatesq))/2);
+%     str=names{1,2}{poslatdir,1};
+%     img=imread(strcat(s1,str));
+%     img2=uint8(img./8);
+%     img3 = nonUniform(img2,8,4);
+%     figure(25);
+%     imshow(img3);
+%     figure(55);
+%     stem(imhist(img3));
+posfrontal=floor(((poslatdir)+(poslatesq))/2)
 str=names{1,1}{posfrontal,1};
     figure(26);
 imshow(imread(strcat(s1,str)));
-    str=names{1,2}{posfrontal,1};
-    img=imread(strcat(s1,str));
-    img2=uint8(img./8);
-    img3 = nonUniform(img2,8,4);
-    figure(27);
-    imshow(img3);
-    figure(57);
-    stem(imhist(img3));
+%     str=names{1,2}{posfrontal,1};
+%     img=imread(strcat(s1,str));
+%     img2=uint8(img./8);
+%     img3 = nonUniform(img2,8,4);
+%     figure(27);
+%     imshow(img3);
+%     figure(57);
+%     stem(imhist(img3));
 
 %%%point cloud stuff
 %%% ptCloud = pcfromkinect(imread(strcat(s1,names{1,2}{posfrontal,1})),imaq.VideoDevice('kinect',2),imread(strcat(s1,str)));
