@@ -39,7 +39,7 @@ function [img4,img5] = getBest2region(img3)
     end
     
     %label regions
-    conn=8;
+    conn=4;
     [L, num] = bwlabel(img4, conn);
     [L2, num2] = bwlabel(img5, conn);
     
