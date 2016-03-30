@@ -8,11 +8,10 @@ function [result] = getTime(str)
             str=str(k(1):max(size(str)));
         end
         k = strfind(str, '_');
-        tamanho=max(size(k));
-        h = str2double(str(  (k(tamanho-3)+1): (k(tamanho-3)+2)  ));
-        m = str2double(str(  (k(tamanho-2)+1): (k(tamanho-2)+2)  ));
-        s = str2double(str(  (k(tamanho-1)+1): (k(tamanho-1)+2)  ));
-        ms =str2double(str(  (k(tamanho  )+1): (k(tamanho  )+3)  ));
+        h = str2double(str(  (k(4)+1): (k(4)+2)  ));
+        m = str2double(str(  (k(5)+1): (k(5)+2)  ));
+        s = str2double(str(  (k(6)+1): (k(6)+2)  ));
+        ms =str2double(str(  (k(7)+1): (k(7)+3)  ));
         result =(h*60*60*1000)+(m*60*1000)+(s*1000)+ms;
     else
         result=-1;
