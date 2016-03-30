@@ -12,7 +12,6 @@ tic
 getPairs(s1);
 fileID = fopen('DataMatchNames.txt');
 names =textscan(fileID,'%s %s');
-
 tamanho=max(size(names{1,1}));
 measurements=zeros(tamanho,5);
 % centros=zeros(tamanho,3);
@@ -66,7 +65,6 @@ for i=1:tamanho
     end;
 end
 
-
 %% Select Final frontal view depth and color image
 if(method==1)
 %     area2=measurements(:,2);
@@ -90,6 +88,7 @@ else
     arraymedio2(:)=valormedio2;
     plot(1:1:tamanho,arraymedio2);
 end;
+tic
 if(method==1)
     %1st method - 1st turn
     poslatesq=1;
@@ -102,8 +101,11 @@ if(method==1)
     str=names{1,1}{poslatesq,1};
     letfResult=imread(strcat(s1,str));
     imwrite(letfResult,'Results\cleft1.png');
-else
-    imwrite(imread(strcat(s1,names{1,2}{poslatesq,1})),'Results\dleft1.png');
+    if(code==2)
+        imwrite(imread(strcat(s1,names{1,2}{poslatesq,1})),'Results\dright1.png');
+    else
+        imwrite(imread(strcat(s1,names{1,2}{poslatesq,1})),'Results\dleft1.png');
+    end
     %     str=names{1,2}{poslatesq,1};
     %     img=imread(strcat(s1,str));
     %     img2=uint8(img./8);
@@ -128,7 +130,11 @@ else
     str=names{1,1}{poslatdir,1};
     rightResult=imread(strcat(s1,str));
     imwrite(rightResult,'Results\cright1.png');
-    imwrite(imread(strcat(s1,names{1,2}{poslatdir,1})),'Results\dright1.png');
+    if(code==2)
+        imwrite(imread(strcat(s1,names{1,2}{poslatdir,1})),'Results\dleft1.png');
+    else
+        imwrite(imread(strcat(s1,names{1,2}{poslatdir,1})),'Results\dright1.png');
+    end
     %     str=names{1,2}{poslatdir,1};
     %     img=imread(strcat(s1,str));
     %     img2=uint8(img./8);

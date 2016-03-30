@@ -12,7 +12,6 @@ tic
 getPairs(s1);
 fileID = fopen('DataMatchNames.txt');
 names =textscan(fileID,'%s %s');
-
 tamanho=max(size(names{1,1}));
 measurements=zeros(tamanho,5);
 % centros=zeros(tamanho,3);
@@ -66,7 +65,6 @@ for i=1:tamanho
     end;
 end
 
-
 %% Select Final frontal view depth and color image
 if(method==1)
 %     area2=measurements(:,2);
@@ -90,6 +88,7 @@ else
     arraymedio2(:)=valormedio2;
     plot(1:1:tamanho,arraymedio2);
 end;
+tic
 if(method==1)
     %1st method - 1st turn
     poslatesq=1;

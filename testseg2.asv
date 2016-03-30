@@ -3,7 +3,7 @@ clear;
 close all;
 tic
 %% Options
-plotOption=0;
+plotOption=1;
 %% Get Depth Image File
 % [filename, pathname] = uigetfile({'*.jpg;*.png;*.gif;*.bmp', 'All Image Files (*.jpg, *.png, *.gif, *.bmp)'; ...
 %                 '*.*',                   'All Files (*.*)'}, ...
@@ -127,20 +127,18 @@ for i=1:M
     end
 end
 
+figure(15);
+imshow(img10); %result
 
 %% Get region of insterest
 img2=uint8(img10./8);
+figure(16)
+imshow(img2);   
 imgnovo=im2bw(img2,graythresh(img2));
 img14=uint8(times(double(img2),~imgnovo)+(imgnovo*255));
 img3=nonUniform(img14,8,7);
-if(plotOption==1)
-    figure(15);
-    imshow(img10); %result
-    figure(16)
-    imshow(img2);   
-    figure(17);
-    imshow(img3);
-end;
+figure(17);
+imshow(img3);
 [img4] = getBestRegion(img3);
 %Fix top values
 cont=0;
@@ -177,12 +175,10 @@ end
 % filename=strcat('seg2',filename);  
 % ficheiro=strcat(pathname,'seg.png');  
 % imwrite(img11,ficheiro);
-if(plotOption==1)
-    figure(18);
-    imshow(img4);
-    figure(19);
-    imshow(img11);
-end;
+figure(18);
+imshow(img4);
+figure(19);
+imshow(img11);
 
 %% Get top right and left points of segmented region
 posX1=0;
@@ -301,10 +297,9 @@ end
 %% Save to new depth png image file
 ficheiro=strcat(pathname,'seg4.png');  
 imwrite(img11,ficheiro);
-if(plotOption==1)
-    figure(22);
-    imshow(img11);
-end;
+figure(22);
+imshow(img11);
+
 %% Get bottom right and left points of segmented region AGAIN
 posX1=0;
 posY1=0;
@@ -369,9 +364,8 @@ end
 %% Save to new depth png image file
 ficheiro=strcat(pathname,'segment.png');  
 imwrite(img12,ficheiro);
-if(plotOption==1)
-    figure(24);
-    imshow(img12);
-end;
+figure(24);
+imshow(img12);
+
 
 toc
