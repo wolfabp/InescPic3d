@@ -1,14 +1,16 @@
 clc;
 clear;
 close all;
+tic
 %% Get Depth Image File
-[filename, pathname] = uigetfile({'*.jpg;*.png;*.gif;*.bmp', 'All Image Files (*.jpg, *.png, *.gif, *.bmp)'; ...
-                '*.*',                   'All Files (*.*)'}, ...
-                'Pick an image file',...
-                'C:\Users\António Pintor\Desktop\');
-
-tic            
-ficheiro=strcat(pathname,filename);            
+% [filename, pathname] = uigetfile({'*.jpg;*.png;*.gif;*.bmp', 'All Image Files (*.jpg, *.png, *.gif, *.bmp)'; ...
+%                 '*.*',                   'All Files (*.*)'}, ...
+%                 'Pick an image file',...
+%                 'C:\Users\António Pintor\Desktop\');
+            
+% ficheiro=strcat(pathname,filename);   
+ficheiro='C:\Users\António Pintor\Documents\MATLAB\INESC\InescPic3d\Results\dfrontal1.png';
+pathname='C:\Users\António Pintor\Documents\MATLAB\INESC\InescPic3d\Results\';
 img1= imread(ficheiro);
 figure(01);
 imshow(img1);
@@ -130,6 +132,26 @@ img3=nonUniform(img14,8,7);
 figure(17);
 imshow(img3);
 [img4] = getBestRegion(img3);
+%Fix top values
+cont=0;
+for u=1:M
+    cont=0;
+    for v=1:N
+        if(img4(u,v)==255)
+            cont=cont+1;
+        end
+    end
+    if(cont<50)
+        for v=1:N
+            img4(u,v)=0;
+        end
+    else
+        break;
+    end
+end
+
+
+
 % Segmentating the region of interest and put any other value invalid
 img11=img10;
 for u=1:M
@@ -145,10 +167,10 @@ end
 % filename=strcat('seg2',filename);  
 % ficheiro=strcat(pathname,'seg.png');  
 % imwrite(img11,ficheiro);
-% figure(18);
-% imshow(img4);
-% figure(19);
-% imshow(img11);
+figure(18);
+imshow(img4);
+figure(19);
+imshow(img11);
 
 %% Get top right and left points of segmented region
 posX1=0;
@@ -332,10 +354,10 @@ end
 
 
 %% Save to new depth png image file
-ficheiro=strcat(pathname,'seg6.png');  
-imwrite(img13,ficheiro);
+ficheiro=strcat(pathname,'segment.png');  
+imwrite(img12,ficheiro);
 figure(24);
-imshow(img13);
+imshow(img12);
 
 
 toc
