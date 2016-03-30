@@ -299,7 +299,7 @@ for u=posX2-15:posX2
 end
 
 %% Save to new depth png image file
-ficheiro=strcat(pathname,'seg4.png');  
+ficheiro=strcat(pathname,'segRegion.png');  
 imwrite(img11,ficheiro);
 if(plotOption==1)
     figure(22);
