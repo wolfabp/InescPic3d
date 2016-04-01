@@ -23,14 +23,14 @@ img2=uint8(img1./8);
 imgnovo=im2bw(img2,graythresh(img2));
 img14=uint8(times(double(img2),~imgnovo)+(imgnovo*255));
 
-% minimo=min(img14(:));
-% img15=img14-minimo;
-% maximo=max(img15(:));
-% In=find(img15 == maximo);
-% img15(In)=NaN;
-% maximo=max(img15(:));
-% fator=255.0/maximo;
-% imgf=img15.*fator;
+minimo=min(img14(:));
+img15=img14-minimo;
+maximo=max(img15(:));
+In=find(img15 == maximo);
+img15(In)=NaN;
+maximo=max(img15(:));
+fator=255.0/maximo;
+imgf=img15.*fator;
 
 img3=nonUniform(img14,8,4);
 [counts,r] = imhist(img3);
@@ -47,8 +47,8 @@ for i=256:-1:1
 end
 [M,N]=size(img3);
 for i=1:M
-    for j=1:N
-        if(img3(i,j)==regions(4) || img3(i,j)==regions(2) || img3(i,j)==regions(3))
+    for j=N:-1:1
+        if(img3(i,j)==regions(1) || img3(i,j)==regions(2) || img3(i,j)==regions(3))
             img14(i,j)=255;
         else if(img3(i,j)==255)
         else
@@ -75,7 +75,8 @@ if(plotOption==1)
 %     figure(71);
 %     [counts,r] = imhist(img15);
 %     stem(r,counts);
-%     figure(72);
+    figure(72);
+    imshow();
 %     [counts,r] = imhist(imgf);
 %     stem(r,counts);
     
@@ -102,79 +103,79 @@ img10=img14;
 % end
 
 %% Analyze Right Side, get 2nd edge
-cnt1=zeros(M,1);
-pos=N;
-for i=1:M
-    for j=N:-1:1
-       if(BW2(i,j)==1)
-           pos=j;
-           break;
-       end
-    end
-    for j=pos:-1:1
-       if(BW2(i,j)==0)
-           pos=j;
-           break;
-       end
-    end
-    for j=pos:-1:1
-       if(BW2(i,j)==1)
-           pos=j;
-           break;
-       end
-    end
-    for j=pos:-1:1
-       if(BW2(i,j)==0)
-           pos=j;
-           break;
-       end
-    end
-    cnt1(i)=pos;
-end
-
-%% Analyze Left Side, get 2nd edge
-% cnt2=zeros(M,1);
+% cnt1=zeros(M,1);
+% pos=N;
 % for i=1:M
-%     for j=1:N
+%     for j=N:-1:1
 %        if(BW2(i,j)==1)
 %            pos=j;
 %            break;
 %        end
 %     end
-%     for j=pos:N
+%     for j=pos:-1:1
 %        if(BW2(i,j)==0)
 %            pos=j;
 %            break;
 %        end
 %     end
-%     for j=pos:N
+%     for j=pos:-1:1
 %        if(BW2(i,j)==1)
 %            pos=j;
 %            break;
 %        end
 %     end
-%     for j=pos:N
+%     for j=pos:-1:1
 %        if(BW2(i,j)==0)
 %            pos=j;
 %            break;
 %        end
 %     end
-%     cnt2(i)=pos;
+%     cnt1(i)=pos;
 % end
 
-%% Erase Right Side
+%% Analyze Left Side, get 2nd edge
+cnt2=zeros(M,1);
 for i=1:M
-    for j=N:-1:cnt1(i)
-        img10(i,j)=65535;
+    for j=1:N
+       if(BW2(i,j)==1)
+           pos=j;
+           break;
+       end
     end
+    for j=pos:N
+       if(BW2(i,j)==0)
+           pos=j;
+           break;
+       end
+    end
+    for j=pos:N
+       if(BW2(i,j)==1)
+           pos=j;
+           break;
+       end
+    end
+    for j=pos:N
+       if(BW2(i,j)==0)
+           pos=j;
+           break;
+       end
+    end
+    cnt2(i)=pos;
 end
 
-%% Erase Left Side
+%% Erase Right Side
 % for i=1:M
-%     for j=1:cnt2(i)
+%     for j=N:-1:cnt1(i)
 %         img10(i,j)=65535;
 %     end
 % end
+
+%% Erase Left Side
+for i=1:M
+    for j=1:cnt2(i)
+        img10(i,j)=65535;
+    end
+end
 
 
 %% Get region of insterest
@@ -362,7 +363,7 @@ for u=1:M
 end
 
 %% Save to new depth png image file
-ficheiro=strcat(pathname,'segRegionLeft.png');  
+ficheiro=strcat(pathname,'segRegionRight.png');  
 imwrite(img18,ficheiro);
 if(plotOption==1)
     figure(22);

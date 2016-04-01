@@ -23,14 +23,14 @@ img2=uint8(img1./8);
 imgnovo=im2bw(img2,graythresh(img2));
 img14=uint8(times(double(img2),~imgnovo)+(imgnovo*255));
 
-% minimo=min(img14(:));
-% img15=img14-minimo;
-% maximo=max(img15(:));
-% In=find(img15 == maximo);
-% img15(In)=NaN;
-% maximo=max(img15(:));
-% fator=255.0/maximo;
-% imgf=img15.*fator;
+minimo=min(img14(:));
+img15=img14-minimo;
+maximo=max(img15(:));
+In=find(img15 == maximo);
+img15(In)=NaN;
+maximo=max(img15(:));
+fator=255.0/maximo;
+imgf=img15.*fator;
 
 img3=nonUniform(img14,8,4);
 [counts,r] = imhist(img3);
@@ -38,17 +38,17 @@ v=1;
 regions=zeros(4,1);
 for i=256:-1:1
     if(counts(i)~=0)
-        regions(v)=i-1;
-        v=v+1;
-        if(v==5)
-            break;
+        if(v<5)
+            regions(v)=i-1;
         end;
+        v=v+1;
     end
 end
+v
 [M,N]=size(img3);
 for i=1:M
-    for j=1:N
-        if(img3(i,j)==regions(4) || img3(i,j)==regions(2) || img3(i,j)==regions(3))
+    for j=N:-1:1
+        if(img3(i,j)==regions(1) || img3(i,j)==regions(2) || img3(i,j)==regions(3))
             img14(i,j)=255;
         else if(img3(i,j)==255)
         else
@@ -75,7 +75,24 @@ if(plotOption==1)
 %     figure(71);
 %     [counts,r] = imhist(img15);
 %     stem(r,counts);
-%     figure(72);
+    figure(72);
+    imshow(imgf);
+    figure(74);
+    imgt=nonUniform(imgf,8,5);
+    imshow(imgt);
+    
+    
+    for i=1:M
+        for j=1:N
+            if(img14(i,j)==255)
+                imgt(i,j)=255;
+            end
+        end
+    end
+    figure(75);
+    imshow(imgt);
+    
+    
 %     [counts,r] = imhist(imgf);
 %     stem(r,counts);
     

@@ -88,7 +88,6 @@ else
     arraymedio2(:)=valormedio2;
     plot(1:1:tamanho,arraymedio2);
 end;
-tic
 if(method==1)
     %1st method - 1st turn
     poslatesq=1;

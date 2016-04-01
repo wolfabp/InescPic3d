@@ -38,17 +38,17 @@ v=1;
 regions=zeros(4,1);
 for i=256:-1:1
     if(counts(i)~=0)
-        regions(v)=i-1;
-        v=v+1;
-        if(v==5)
-            break;
+        if(v<5)
+            regions(v)=i-1;
         end;
+        v=v+1;
     end
 end
+v
 [M,N]=size(img3);
 for i=1:M
     for j=1:N
-        if(img3(i,j)==regions(4) || img3(i,j)==regions(2) || img3(i,j)==regions(3))
+        if(img3(i,j)==regions(1) || img3(i,j)==regions(2) || img3(i,j)==regions(3))
             img14(i,j)=255;
         else if(img3(i,j)==255)
         else
