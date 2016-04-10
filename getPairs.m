@@ -41,7 +41,7 @@ end;
 
 % tamanho=min(posDepth-1,posColor-1);
 flagFound=0;
-fileID = fopen('DataMatchNames.txt','w');
+fileID = fopen(strcat(str,'DataMatchNames.txt'),'w');
 oldposdeth=3000;
 tamanhoC=max(size(ColorFilesNames));
 tamanhoD= max(size(DepthFilesNames));

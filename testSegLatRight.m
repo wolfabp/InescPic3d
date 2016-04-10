@@ -34,12 +34,12 @@ imgf=img15.*fator;
 
 img3=nonUniform(img14,8,4);
 [counts,r] = imhist(img3);
-v=1;
+v=0;
 regions=zeros(4,1);
 for i=256:-1:1
     if(counts(i)~=0)
         if(v<5)
-            regions(v)=i-1;
+            regions(v+1)=i-1;
         end;
         v=v+1;
     end
@@ -364,12 +364,13 @@ for u=posX2-15:posX2
     end
 end
 
-img18=img1;
-figure(62);
-imshow(img18);
-figure(63);
-imshow(img11);
-
+if(plotOption==1)
+    img18=img1;
+    figure(62);
+    imshow(img18);
+    figure(63);
+    imshow(img11);
+end;
 for u=1:M
     for v=1:N
         if(img11(u,v)==255)

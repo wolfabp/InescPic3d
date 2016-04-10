@@ -11,7 +11,7 @@ plotOption=1;
 %                 'C:\Users\António Pintor\Desktop\');
             
 % ficheiro=strcat(pathname,filename);   
-ficheiro='C:\Users\António Pintor\Documents\MATLAB\INESC\InescPic3d\Results\dleft1.png';
+ficheiro='C:\Users\António Pintor\Documents\MATLAB\INESC\InescPic3d\Results\dleft2.png';
 pathname='C:\Users\António Pintor\Documents\MATLAB\INESC\InescPic3d\Results\';
 img1= imread(ficheiro);
 if(plotOption==1)
@@ -44,7 +44,7 @@ for i=256:-1:1
         v=v+1;
     end
 end
-v
+v=v-1;
 [M,N]=size(img3);
 for i=1:M
     for j=1:N

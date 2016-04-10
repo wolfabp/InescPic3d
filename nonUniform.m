@@ -30,7 +30,7 @@ while 1<2
     %atribuir o k mais proximo de um ponto
     a=1;
     for i=1:tamanho
-        minimo=255;
+        minimo=254;
         for y=1:K
             mini=abs((i-1)-kClusters(y));
             if(mini<minimo)
