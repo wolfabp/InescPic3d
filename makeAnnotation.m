@@ -28,32 +28,26 @@ else
     end
 end
 num=6;
-temposIdeais(num,1);
+temposIdeais=zeros(num,1);
 %% Select Ideal Poses
 % figure(1);
 % imshow(imread('pose_F.png','png'));
 [limitF1min, pathname] = uigetfile({'*.jpg;*.png;*.gif;*.bmp', 'All Image Files (*.jpg, *.png, *.gif, *.bmp)'; ...
-            '*.*','All Files (*.*)'}, 'Select Patient Frontal minimal',s1);
-temposIdeais(1)=getTime(limitF1min);
-[limitF1max, pathname] = uigetfile({'*.jpg;*.png;*.gif;*.bmp', 'All Image Files (*.jpg, *.png, *.gif, *.bmp)'; ...
-            '*.*','All Files (*.*)'}, 'Select Patient Frontal maximal',s1);
-temposIdeais(2)=getTime(limitF1max);
+            '*.*','All Files (*.*)'}, 'Select Patient Frontal minimal',s1,'MultiSelect', 'on');
+temposIdeais(1)=getTime(limitF1min{1});
+temposIdeais(2)=getTime(limitF1min{2});
 
 % imshow(imread('pose_R.png','png'));
 [limitR1min, pathname] = uigetfile({'*.jpg;*.png;*.gif;*.bmp', 'All Image Files (*.jpg, *.png, *.gif, *.bmp)'; ...
-            '*.*','All Files (*.*)'}, 'Select Patient Right minimal',s1);
-temposIdeais(3)=getTime(limitR1min);
-[limitR1max, pathname] = uigetfile({'*.jpg;*.png;*.gif;*.bmp', 'All Image Files (*.jpg, *.png, *.gif, *.bmp)'; ...
-            '*.*','All Files (*.*)'}, 'Select Patient Right maximal',s1);
-temposIdeais(4)=getTime(limitR1max);
+            '*.*','All Files (*.*)'}, 'Select Patient Right minimal',s1,'MultiSelect', 'on');
+temposIdeais(3)=getTime(limitR1min{1});
+temposIdeais(4)=getTime(limitR1min{2});
 
 % imshow(imread('pose_L.png','png'));
 [limitL1min, pathname] = uigetfile({'*.jpg;*.png;*.gif;*.bmp', 'All Image Files (*.jpg, *.png, *.gif, *.bmp)'; ...
-            '*.*','All Files (*.*)'}, 'Select Patient Left minimal',s1);
-temposIdeais(5)=getTime(limitL1min);
-[limitL1max, pathname] = uigetfile({'*.jpg;*.png;*.gif;*.bmp', 'All Image Files (*.jpg, *.png, *.gif, *.bmp)'; ...
-            '*.*','All Files (*.*)'}, 'Select Patient Left maximal',s1);
-temposIdeais(6)=getTime(limitL1max);
+            '*.*','All Files (*.*)'}, 'Select Patient Left minimal',s1,'MultiSelect', 'on');
+temposIdeais(5)=getTime(limitL1min{1});
+temposIdeais(6)=getTime(limitL1min{2});
 
 %% Find Closest TimeStamp
 temposmin=zeros(num,2);

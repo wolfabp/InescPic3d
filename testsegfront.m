@@ -5,14 +5,14 @@ tic
 %% Options
 plotOption=0;
 %% Get Depth Image File
-% [filename, pathname] = uigetfile({'*.jpg;*.png;*.gif;*.bmp', 'All Image Files (*.jpg, *.png, *.gif, *.bmp)'; ...
-%                 '*.*',                   'All Files (*.*)'}, ...
-%                 'Pick an image file',...
-%                 'C:\Users\António Pintor\Desktop\');
+[filename, pathname] = uigetfile({'*.jpg;*.png;*.gif;*.bmp', 'All Image Files (*.jpg, *.png, *.gif, *.bmp)'; ...
+                '*.*',                   'All Files (*.*)'}, ...
+                'Pick an image file',...
+                'D:\INESC\DadosTese\');
             
-% ficheiro=strcat(pathname,filename);   
-ficheiro='C:\Users\António Pintor\Documents\MATLAB\INESC\InescPic3d\Results\dfrontal1.png';
-pathname='C:\Users\António Pintor\Documents\MATLAB\INESC\InescPic3d\Results\';
+ficheiro=strcat(pathname,filename);   
+% ficheiro='C:\Users\António Pintor\Documents\MATLAB\INESC\InescPic3d\Results\dfrontal1.png';
+% pathname='C:\Users\António Pintor\Documents\MATLAB\INESC\InescPic3d\Results\';
 img1= imread(ficheiro);
 if(plotOption==1)
     figure(01);
@@ -143,22 +143,21 @@ if(plotOption==1)
 end;
 [img4] = getBestRegion(img3);
 %Fix top values
-cont=0;
-for u=1:M
-    cont=0;
-    for v=1:N
-        if(img4(u,v)==255)
-            cont=cont+1;
-        end
-    end
-    if(cont<50)
-        for v=1:N
-            img4(u,v)=0;
-        end
-    else
-        break;
-    end
-end
+% for u=1:M
+%     cont=0;
+%     for v=1:N
+%         if(img4(u,v)==255)
+%             cont=cont+1;
+%         end
+%     end
+%     if(cont<50)
+%         for v=1:N
+%             img4(u,v)=0;
+%         end
+%     else
+%         break;
+%     end
+% end
 
 
 
@@ -183,7 +182,40 @@ if(plotOption==1)
     figure(19);
     imshow(img11);
 end;
+%% %% Fix top
 
+img24=im2bw(img11,graythresh(img11));
+   
+cont=double(zeros(M,1));
+img24=~img24;
+for i=1:M
+    for j=1:N
+            if(img24(i,j)==1)
+                cont(i)=cont(i)+1;
+            end;
+    end;
+end;
+maximo=max(cont)*0.70;
+   
+for i=1:M
+    if(cont(i)<maximo)
+        img11(i,:)=65535;
+    else
+        break;
+    end;
+end; 
+figure(24);
+imshow(img11);
+%% Fix Bottom
+for i=M:-1:1
+    if(cont(i)<maximo)
+        img11(i,:)=65535;
+    else
+        break;
+    end;
+end; 
+figure(25);
+imshow(img11);
 %% Get top right and left points of segmented region
 posX1=0;
 posY1=0;
@@ -234,23 +266,23 @@ end
 % imshow(img11);
 
 %% Remove Lines of pixels from top until full line of close pixels
-tamlinha=(posY2-posY1)+1;
-for i=1:posX1
-    counter=0;
-    for j=posY1:posY2
-        if(~(img11(i,j)==65535))
-            counter=counter+1;
-        end
-    end
-    if(counter==tamlinha)
-        break;
-    end
-end
-for u=1:i
-    for v=posY1:posY2
-        img11(u,v)=65535;
-    end
-end
+% tamlinha=(posY2-posY1)+1;
+% for i=1:posX1
+%     counter=0;
+%     for j=posY1:posY2
+%         if(~(img11(i,j)==65535))
+%             counter=counter+1;
+%         end
+%     end
+%     if(counter==tamlinha)
+%         break;
+%     end
+% end
+% for u=1:i
+%     for v=posY1:posY2
+%         img11(u,v)=65535;
+%     end
+% end
 % ficheiro=strcat(pathname,'seg3.png');  
 % imwrite(img11,ficheiro);
 % figure(21);
@@ -292,15 +324,15 @@ for i=M:-1:1
 end
 
 %% Remove Bottom 15 lines with detected points
-for u=posX2-15:posX2
-    for v=1:N
-        img11(u,v)=65535;
-    end
-end
+% for u=posX2-15:posX2
+%     for v=1:N
+%         img11(u,v)=65535;
+%     end
+% end
 
 %% Save to new depth png image file
-ficheiro=strcat(pathname,'segRegionFront.png');  
-imwrite(img11,ficheiro);
+% ficheiro=strcat(pathname,'segRegionFront.png');  
+% imwrite(img11,ficheiro);
 if(plotOption==1)
     figure(22);
     imshow(img11);
@@ -372,15 +404,15 @@ end
 %% Find hands
 botseg=img13;
 botseg(1:posX1,1:N)=65535;
-figure(25);
-imshow(botseg);
+% figure(25);
+% imshow(botseg);
 img2=uint8(botseg./8);   
 imgnovo=im2bw(img2,graythresh(img2));
 img14=uint8(times(double(img2),~imgnovo)+(imgnovo*255));
 BW1 = edge(img14,'Canny',[0.0 0.01],0.03);
 BW2 = imdilate(BW1,strel('disk',3));
-figure(26)
-imshow(BW1);
+% figure(26)
+% imshow(BW1);
 % figure(27)
 % imshow(BW2);
 % if(plotOption==1)
@@ -388,11 +420,64 @@ imshow(BW1);
 
 
 %% Save to new depth png image file
-ficheiro=strcat(pathname,'segFront.png');  
-imwrite(img13,ficheiro);
-if(plotOption==1)
-    figure(24);
-    imshow(img13);
-end;
 
+img2=uint8(img1./8);   
+imgnovo=im2bw(img2,graythresh(img2));
+img13(imgnovo(:,:)==1)=65535;
+figure(24);
+imshow(img13);
+se = strel('disk',3);
+img13=imdilate(img13,se);
+imwrite(img13,[pathname,'dfrontal_Seg_Full.png']);
+a = double ( img13);
+a(a==a(1))= nan;
+amx = max(a(:));
+a = a/amx;
+figure(26);
+imshow(a,[]);
+% a=uint8(round(a*255));
+% figure(25);
+% imshow(a,[]);
+%     [IDX2, C2] = kmeans(a(:),3);
+%     J2=reshape(IDX2,size(a));
+%     f2=uint8(round(C2(J2(:,:))));
+    
+BW1 = edge(a,'Canny',[0.0 0.05],'vertical');
+BW2 = imdilate(BW1,strel('disk',3));
+[M,N]=size(BW1);
+plotOption=1;
+if(plotOption==1)
+%     figure(13)
+%     imshow(BW1);
+%     figure(14)
+%     imshow(BW2);
+%     figure(15)
+%     imshow(f2);
+end;
+%   
+% img14=im2bw(img13,graythresh(img13));
+%    
+% cont=double(zeros(M,1));
+% img14=~img14;
+% for i=1:M
+%     for j=1:N
+%             if(img14(i,j)==1)
+%                 cont(i)=cont(i)+1;
+%             end;
+% %        cont(i)=cont(i)+double(img5(i,j));
+%     end;
+% end;
+% maximo=max(cont)*0.4;
+%    
+% for i=1:M
+%     if(cont(i)<maximo)
+%         img13(i,:)=65535;
+%     else
+%         break;
+%     end;
+% end; 
+%     figure(24);
+%     imshow(img13);
+
+    
 toc

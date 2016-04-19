@@ -1,4 +1,4 @@
-function [posL1,posF1,posR1,posL2,posF2,posR2]= SelectViews(s1,plotOption)
+function [posL1,posF1,posR1,posL2,posF2,posR2]= SelectViews2(s1,plotOption)
     %% Select Options
     code=0;
     %% Got to folder + check calib + get pairs list    
@@ -48,10 +48,8 @@ function [posL1,posF1,posR1,posL2,posF2,posR2]= SelectViews(s1,plotOption)
         img2=uint8(img./8);
         imgnovo=im2bw(img2,graythresh(img2));    
         img14=uint8(times(double(img2),~imgnovo)+imgnovo*255);
-%         figure(10)
-%         imshow(img14);
 %         I=double(img14);
-%         [IDX2, C2] = kmeans(I(:),16);
+%         [IDX2, C2] = kmeans(I(:),5);
 %         J2=reshape(IDX2,size(img14));
 %         img3=uint8(round(C2(J2(:,:))));
         img3=nonUniform(img14,8,4);
@@ -165,7 +163,7 @@ function [posL1,posF1,posR1,posL2,posF2,posR2]= SelectViews(s1,plotOption)
         [Vo3,Io3] = pickpeaks(simet,npts,dim,mode1);
         
         
-        if(abs(Vo3(1)-Vo3(2))<10)
+        if(abs(Vo3(1)-Vo3(2))<10 && size(Vo3,1)==2)
             pos1 = min(Io3(1),Io3(2));
             pos2 = max(Io3(1),Io3(2));
             posfrontal2=round((pos1+pos2)/2);
@@ -190,10 +188,20 @@ function [posL1,posF1,posR1,posL2,posF2,posR2]= SelectViews(s1,plotOption)
                 posR2=pos2;
             end
         else
-            [ca, idx] = min(abs(measurements(posfrontal2:tamanho,2)-valormedio));
-            pos1 =posfrontal2+idx;
-            [ca, idx] = min(abs(measurements(1:posfrontal2,2)-valormedio));
-            pos2 = idx;
+          
+            for i=posfrontal2:-1:1
+                if((abs(simet(i)-media)/max(simet))<0.05)
+                    pos2=i;
+                    break;
+                end
+            end
+
+            for i=posfrontal2:round(tamanho)
+                if((abs(simet(i)-media)/max(simet))<0.05)
+                    pos1=i;
+                    break;
+                end
+            end
             if(code==3)
                 a=3
                 imwrite(imread(strcat(s1,names{1,1}{pos2,1})),strcat(localresults,'cright1_sim.png'));
@@ -213,11 +221,21 @@ function [posL1,posF1,posR1,posL2,posF2,posR2]= SelectViews(s1,plotOption)
             end
         end
     else
-        a=5
-        [ca, idx] = min(abs(measurements(posfrontal2:round(tamanho/2),2)-valormedio));
-        pos1 =posfrontal2+idx;
-        [ca, idx] = min(abs(measurements(1:posfrontal2,2)-valormedio));
-        pos2 = idx;
+     
+        for i=posfrontal2:-1:1
+            if((abs(simet(i)-media)/max(simet))<0.05)
+                pos2=i;
+                break;
+            end
+        end
+
+        for i=posfrontal2:round(tamanho/2)
+            if((abs(simet(i)-media)/max(simet))<0.05)
+                pos1=i;
+                break;
+            end
+        end
+        
         imwrite(imread(strcat(s1,names{1,1}{pos1,1})),strcat(localresults,'cright1_sim.png'));
         imwrite(imread(strcat(s1,names{1,2}{pos1,1})),strcat(localresults,'dright1_sim.png'));
         imwrite(imread(strcat(s1,names{1,1}{pos2,1})),strcat(localresults,'cleft1_sim.png'));
@@ -227,119 +245,66 @@ function [posL1,posF1,posR1,posL2,posF2,posR2]= SelectViews(s1,plotOption)
     end
     %%
 %1st method - 1st turn
-poslatesq=1;
-for i=1: tamanho
-   if(measurements(i,2)>valormedio)
-       poslatesq=i;
-       break;
-   end
-end
+    % Analyse area
+    h=fspecial('gaussian',[1 100],10);
+    area=imfilter(measurements(:,2),h');
+%         measurements(:,2)=smooth(measurements(:,2),0.05,'moving');
+    media=mean(area);
+    if(plotOption==1)
+        figure(50);
+        plot(1:1:tamanho,measurements(:,2),'-o');
+        hold on
+        plot(1:1:tamanho,media,'g');
+        h1=plot(area,'r');
+        hold off
+%         saveas(h1,strcat(localresults,'simtetria.png'));
+%         close 50;
+    end
+    [maxtab3, mintab3]=peakdet(area, 30);
+    mode1='peaks';
+    mode2='troughs';
+    dim=1;
+    npts=round(tamanho*0.15);
+    [Vo1,Io1] = pickpeaks(area,npts,dim,mode1);
+    [Vo2,Io2] = pickpeaks(area,npts,dim,mode2);
+    
+    
+    frontal1=Io1(1);
+    
+    for i=frontal1:-1:1
+        if((abs(area(i)-media)/max(area))<0.05)
+            pos1=i;
+            break;
+        end
+    end
+    
+    for i=frontal1:tamanho
+        if((abs(area(i)-media)/max(area))<0.05)
+            pos2=i;
+            break;
+        end
+    end
+    
+   
 if(code==3)
-    imwrite(imread(strcat(s1,names{1,1}{poslatesq,1})),strcat(localresults,'cright1.png'));
-    imwrite(imread(strcat(s1,names{1,2}{poslatesq,1})),strcat(localresults,'dright1.png'));  
-        posR1=poslatesq;
+    imwrite(imread(strcat(s1,names{1,1}{pos2,1})),strcat(localresults,'cleft1.png'));
+    imwrite(imread(strcat(s1,names{1,2}{pos2,1})),strcat(localresults,'dleft1.png'));
+    imwrite(imread(strcat(s1,names{1,1}{pos1,1})),strcat(localresults,'cright1.png'));
+    imwrite(imread(strcat(s1,names{1,2}{pos1,1})),strcat(localresults,'dright1.png'));
+        posL1=pos2;
+        posR1=pos1;
 else
-    imwrite(imread(strcat(s1,names{1,1}{poslatesq,1})),strcat(localresults,'cleft1.png'));
-    imwrite(imread(strcat(s1,names{1,2}{poslatesq,1})),strcat(localresults,'dleft1.png'));
-        posL1=poslatesq;
+    imwrite(imread(strcat(s1,names{1,1}{pos1,1})),strcat(localresults,'cleft1.png'));
+    imwrite(imread(strcat(s1,names{1,2}{pos1,1})),strcat(localresults,'dleft1.png'));
+    imwrite(imread(strcat(s1,names{1,1}{pos2,1})),strcat(localresults,'cright1.png'));
+    imwrite(imread(strcat(s1,names{1,2}{pos2,1})),strcat(localresults,'dright1.png'));
+        posL1=pos1;
+        posR1=pos2;
 end
 
-if(code==1)
-    a=round(tamanho/2);
-else
-    a=tamanho;
-end;
-
-if(code~=1)
-    poslatdir=a;
-    for i=a:-1:1
-       if(measurements(i,2)>valormedio)
-           poslatdir=i;
-           break;
-       end
-    end
-else
-    poslatdir=1;
-    for i=poslatesq: a
-        flag1=((measurements(i+1,2)<valormedio));
-        flag2=((measurements(i+2,2)<valormedio));
-        flag3=((measurements(i+3,2)<valormedio));
-        flag4=((measurements(i+4,2)<valormedio));
-        flag5=((measurements(i+5,2)<valormedio));
-        flagTotal=flag1+flag2+flag3+flag4+flag5;
-       if((measurements(i-2,2)<valormedio) && flagTotal>4)
-           poslatdir=i-3;
-           break;
-       end
-    end
+if((abs(frontal1-posR1))< tamanho*0.15 || (abs(frontal1-posL1))< tamanho*0.15 )
+    frontal1=round((posR1+posL1)/2);
 end
-if(code==3)
-    imwrite(imread(strcat(s1,names{1,1}{poslatdir,1})),strcat(localresults,'cleft1.png'));
-    imwrite(imread(strcat(s1,names{1,2}{poslatdir,1})),strcat(localresults,'dleft1.png'));
-        posL1=poslatdir;
-else
-    imwrite(imread(strcat(s1,names{1,1}{poslatdir,1})),strcat(localresults,'cright1.png'));
-    imwrite(imread(strcat(s1,names{1,2}{poslatdir,1})),strcat(localresults,'dright1.png'));
-        posR1=poslatdir;
-end
-
-posfrontal=floor(((poslatdir)+(poslatesq))/2);
-imwrite(imread(strcat(s1,names{1,1}{posfrontal,1})),strcat(localresults,'cfrontal1.png'));
-imwrite(imread(strcat(s1,names{1,2}{posfrontal,1})),strcat(localresults,'dfrontal1.png'));
-posF1=posfrontal;
-%         if(plotOption==1)
-%                 figure(22);
-%             imshow(letfResult);
-%                 figure(24);
-%             imshow(rightResult);
-%                 figure(26);
-%             imshow(frontalResult);
-%         end;
-if(code==1)
-        posfrontal2=max(Io1(1),Io1(2));
-        [ca, idx] = min(abs(measurements(posfrontal2:tamanho,2)-valormedio));
-        pos3 = posfrontal2+idx;
-        [ca, idx] = min(abs(measurements(round(tamanho/2):posfrontal2,2)-valormedio));
-        pos4 = round(tamanho/2)+idx;
-        imwrite(imread(strcat(s1,names{1,1}{posfrontal2,1})),strcat(localresults,'cfrontal2_sim.png'));
-        imwrite(imread(strcat(s1,names{1,2}{posfrontal2,1})),strcat(localresults,'dfrontal2_sim.png'));
-        imwrite(imread(strcat(s1,names{1,1}{pos4,1})),strcat(localresults,'cright2_sim.png'));
-        imwrite(imread(strcat(s1,names{1,2}{pos4,1})),strcat(localresults,'dright2_sim.png'));
-        imwrite(imread(strcat(s1,names{1,1}{pos3-2,1})),strcat(localresults,'cleft2_sim.png'));
-        imwrite(imread(strcat(s1,names{1,2}{pos3-2,1})),strcat(localresults,'dleft2_sim.png'));
-    %1st method - 2nd turn
-    poslatesq=1;
-    for i=tamanho:-1:1
-       if(measurements(i,2)>valormedio)
-           poslatesq=i;
-           break;
-       end
-    end
-    imwrite(imread(strcat(s1,names{1,1}{poslatesq,1})),strcat(localresults,'cleft2.png'));
-    imwrite(imread(strcat(s1,names{1,2}{poslatesq,1})),strcat(localresults,'dleft2.png'));
-    for i=poslatesq:-1:1
-        flag1=((measurements(i-1,2)<valormedio));
-        flag2=((measurements(i-2,2)<valormedio));
-        flag3=((measurements(i-3,2)<valormedio));
-        flag4=((measurements(i-4,2)<valormedio));
-        flag5=((measurements(i-5,2)<valormedio));
-        flagTotal=flag1+flag2+flag3+flag4+flag5;
-       if((measurements(i+2,2)<valormedio) && flagTotal>4)
-           poslatdir=i+3;
-           break;
-       end
-    end
-    imwrite(imread(strcat(s1,names{1,1}{poslatdir,1})),strcat(localresults,'cright2.png'));
-    imwrite(imread(strcat(s1,names{1,2}{poslatdir,1})),strcat(localresults,'dright2.png'));
-    posfrontal=floor(((poslatdir)+(poslatesq))/2);
-    imwrite(imread(strcat(s1,names{1,1}{posfrontal,1})),strcat(localresults,'cfrontal2.png'));
-    imwrite(imread(strcat(s1,names{1,2}{posfrontal,1})),strcat(localresults,'dfrontal2.png'));            
-%             if(plotOption==1)
-%                     figure(30);
-%                 imshow(letfResult);
-%                     figure(31);
-%                 imshow(rightResult);
-%                     figure(32);
-%                 imshow(frontalResult);
-%             end;
-end;
+imwrite(imread(strcat(s1,names{1,1}{frontal1,1})),strcat(localresults,'cfrontal1.png'));
+imwrite(imread(strcat(s1,names{1,2}{frontal1,1})),strcat(localresults,'dfrontal1.png'));
+posF1=frontal1;
