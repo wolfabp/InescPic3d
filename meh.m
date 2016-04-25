@@ -53,15 +53,17 @@ for i=N:-1:1
     end
 end
 CMi=round((pos1+pos2)/2);
-media=mean(img3(lineA,(CMi-10):(CMi+10)));
-img89=img3;
-img89(img3(:,:)>media)=0;
+m=mean(img3(lineA,(CMi-10):(CMi+10)));
+
 
 nkernel = zeros(21,1);
 nkernel(1)=-1;
 nkernel(21)=1;
-C = conv2(img89,nkernel);
+C = conv2(img3,nkernel);
 candidates2d = (C.*(C<-20).*(C>-100))<0;
+
+candidates2d(img3(:,:)>m)=0;
+
 candidates = sum(candidates2d,2);
 Bcandidates=candidates(lineA:240);
 [maxC,maxI] = max(Bcandidates);
@@ -81,6 +83,7 @@ tempcandidates = repmat(candidates,1,n);
 imshow(tempcandidates,[])
 
 lineB=maxI(1)+lineA;
+% lineB=lineB+20;
 
 figure(2)
 subplot(2,3,1);
@@ -90,23 +93,25 @@ img4(1:lineB,:)=img3(1:lineB,:);
 img10=img1;
 img10(lineB:end,:)=65535;
 
-img10=removeArms(img10,img4,imgnovo,lineB,lineA);
+
+
+img7=img3;
+img10=removeArms(img10,img4,imgnovo,lineB,lineA,img7);
 figure(3)
 imshow(img10);
 imwrite(img10,[pathname,'dfrontal_Seg_Reg.png']);
-pause;
+
 %% Full frontal
 img4=uint8(times(double(img2),~imgnovo)+(imgnovo*255));
 img3=img1;
 img3(img4(:,:)==255)=0;
 
-img10=removeArms(img1,double(img3),imgnovo,lineB,lineA);
+img10=removeArms(img1,double(img3),imgnovo,lineB,lineA,img7);
 figure(4)
 imshow(img10);
 imwrite(img10,[pathname,'dfrontal_Seg_Full.png']);
-pause;
-%% Get Depth Image File
 lineA=lineA+10;
+%% Get Depth Image File
 close all;
 [filename, pathname2] = uigetfile({'*.jpg;*.png;*.gif;*.bmp', 'All Image Files (*.jpg, *.png, *.gif, *.bmp)'; ...
                 '*.*',                   'All Files (*.*)'}, ...
@@ -119,6 +124,8 @@ imshow(img1);
 %% Segment with lineA + lineB
 imgS=uint8(img1./8);   
 imgnovo=im2bw(imgS,graythresh(imgS));
+img4=uint8(times(double(imgS),~imgnovo)+(imgnovo*255));
+img5=uint8((-1*double(img4))+255);
 img2=img1;
 img2(imgnovo(:,:)==1)=65535;
 figure(2)
@@ -142,6 +149,22 @@ img4=uint8(times(double(imgS),~imgnovo)+(imgnovo*255));
 img3=double(img2);
 img3(img4(:,:)==255)=0;
 
+
+% img4=img3(1:lineB,:);
+% 
+% img4 = medfilt2(img4);
+% figure(7);
+% imshow(img4,[]);
+% img5=img4;
+% img5(img5 == 0) = inf;
+% [minC,minI] = min(img5(:));
+% maskmin = img4.*(img4==minC);
+% [xxm,yym]=find(maskmin);
+% figure(8);
+% imshow(maskmin,[]);
+% 
+% xxd=min(xxm(:));
+% yyd=min(yym(:));
 a=floor(CM(1).Centroid);
 xxd=a(2);
 yyd=a(1);
@@ -152,9 +175,11 @@ nkernel(7)=-1;
 dd = conv2(img3,nkernel);
 [m,n] = size(dd);
 right = zeros(m,n);
+% right(:,1:yym(1)) = dd(:,1:yym(1));
 right(:,yyd:n) = dd(:,yyd:n);
 figure(90);
 imshow(right,[]);
+% rightmask = (right.*(right>0))>80;
 rightmask = ((right.*(right>-200))-((right.*(right>-40)).*(right<40)))~=0;
 figure(91);
 imshow(rightmask,[]);
@@ -164,12 +189,12 @@ rightmask=imdilate(rightmask,se);
 figure(10);
 imshow(rightmask,[]);
 for i=yyd:n
-    if(rightmask(lineB-20,i)==1)
+    if(rightmask(lineB-10,i)==1)
         pontod1=i;
         break;
     end
 end
-J2=regiongrowing(rightmask,lineB-20,pontod1);
+J2=regiongrowing(rightmask,lineB-10,pontod1);
 figure(11);
 imshow(J2,[]);
 stats2=regionprops(J2,'Extrema');
@@ -251,6 +276,22 @@ img4=uint8(times(double(imgS),~imgnovo)+(imgnovo*255));
 img3=double(img2);
 img3(img4(:,:)==255)=0;
 
+
+% img4=img3(1:lineB,:);
+% 
+% img4 = medfilt2(img4);
+% figure(7);
+% imshow(img4,[]);
+% img5=img4;
+% img5(img5 == 0) = inf;
+% [minC,minI] = min(img5(:));
+% maskmin = img4.*(img4==minC);
+% [xxm,yym]=find(maskmin);
+% figure(8);
+% imshow(maskmin,[]);
+% 
+% xxd=min(xxm(:));
+% yyd=min(yym(:));
 a=floor(CM(1).Centroid);
 xxd=a(2);
 yyd=a(1);
@@ -261,9 +302,11 @@ nkernel(7)=-1;
 dd = conv2(img3,nkernel);
 [m,n] = size(dd);
 right = zeros(m,n);
+% right(:,yym(1):n) = dd(:,yym(1):n);
 right(:,1:yyd) = dd(:,1:yyd);
 figure(90);
 imshow(right,[]);
+% rightmask = (right.*(right>0))>80;
 rightmask = ((right.*(right>-200))-((right.*(right>-40)).*(right<40)))~=0;
 figure(91);
 imshow(rightmask,[]);
@@ -274,12 +317,12 @@ figure(10);
 imshow(rightmask,[]);
 
 for i=yyd:-1:1
-    if(rightmask(lineB-20,i)==1)
+    if(rightmask(lineB-10,i)==1)
         pontod2=i;
         break;
     end
 end
-J1=regiongrowing(rightmask,lineB-20,pontod2);
+J1=regiongrowing(rightmask,lineB-10,pontod2);
 figure(11);
 imshow(J1,[]);
 stats1=regionprops(J1,'Extrema');

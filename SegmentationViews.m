@@ -1,7 +1,6 @@
-clc
-clear
-close all
-
+clc;
+clear;
+close all;
 se = strel('disk',2);
 %% Get Depth Image File
 [filename, pathname] = uigetfile({'*.jpg;*.png;*.gif;*.bmp', 'All Image Files (*.jpg, *.png, *.gif, *.bmp)'; ...
@@ -18,7 +17,6 @@ img4=uint8(times(double(img2),~imgnovo)+(imgnovo*255));
 
 img3=img1;
 img3(img4(:,:)==255)=0;
-
 cont=double(zeros(M,1));
 img6=~imgnovo;
 for i=1:M
@@ -66,45 +64,26 @@ candidates = sum(candidates2d,2);
 Bcandidates=candidates(lineA:240);
 [maxC,maxI] = max(Bcandidates);
 
-figure(1)
-subplot(1,3,1);
-imshow(img3,[])
-hold on
 [m,n] = size(img3);
-yy = [maxI maxI];
-xx = [1 n-1];
-plot(xx,yy)
-subplot(1,3,2);
-imshow(candidates2d,[])
-subplot(1,3,3);
-tempcandidates = repmat(candidates,1,n);
-imshow(tempcandidates,[])
-
 lineB=maxI(1)+lineA;
-
-figure(2)
-subplot(2,3,1);
 img4 = zeros(m,n);
 img4(1:lineB,:)=img3(1:lineB,:);
-
 img10=img1;
 img10(lineB:end,:)=65535;
 
 img10=removeArms(img10,img4,imgnovo,lineB,lineA);
-figure(3)
-imshow(img10);
+se = strel('disk',4);
+img10=imdilate(img10,se);
 imwrite(img10,[pathname,'dfrontal_Seg_Reg.png']);
-pause;
 %% Full frontal
 img4=uint8(times(double(img2),~imgnovo)+(imgnovo*255));
 img3=img1;
 img3(img4(:,:)==255)=0;
 
 img10=removeArms(img1,double(img3),imgnovo,lineB,lineA);
-figure(4)
-imshow(img10);
+se = strel('disk',4);
+img10=imdilate(img10,se);
 imwrite(img10,[pathname,'dfrontal_Seg_Full.png']);
-pause;
 %% Get Depth Image File
 lineA=lineA+10;
 close all;
@@ -114,24 +93,16 @@ close all;
                 pathname);
                       
 img1=imread([pathname2,filename]);
-figure(1)
-imshow(img1);
 %% Segment with lineA + lineB
 imgS=uint8(img1./8);   
 imgnovo=im2bw(imgS,graythresh(imgS));
 img2=img1;
 img2(imgnovo(:,:)==1)=65535;
-figure(2)
-imshow(img2,[]);
 img2(1:lineA+10,:)=65535;
 img2(lineB+10:end,:)=65535;
-figure(3);
-imshow(img2,[]);
 imgnovo=~imgnovo;
 imgnovo(1:lineA+10,:)=0;
 imgnovo(lineB+10:end,:)=0;
-figure(70)
-imshow(imgnovo);
 CM=regionprops(imdilate(imgnovo,se),'Centroid');
 
 %% remove arm
@@ -153,16 +124,10 @@ dd = conv2(img3,nkernel);
 [m,n] = size(dd);
 right = zeros(m,n);
 right(:,yyd:n) = dd(:,yyd:n);
-figure(90);
-imshow(right,[]);
 rightmask = ((right.*(right>-200))-((right.*(right>-40)).*(right<40)))~=0;
-figure(91);
-imshow(rightmask,[]);
 %%
 se = strel('disk',3);
 rightmask=imdilate(rightmask,se);
-figure(10);
-imshow(rightmask,[]);
 for i=yyd:n
     if(rightmask(lineB-20,i)==1)
         pontod1=i;
@@ -170,8 +135,6 @@ for i=yyd:n
     end
 end
 J2=regiongrowing(rightmask,lineB-20,pontod1);
-figure(11);
-imshow(J2,[]);
 stats2=regionprops(J2,'Extrema');
 cantosuperiorDireito=[stats2.Extrema(1,1),stats2.Extrema(1,2)];
 cnt2=zeros(M,1);
@@ -201,19 +164,8 @@ for j=inicio2:N
     end
 end
 img10(imgnovo()==1)=65535;
-
 img2=img10;
-figure()
-imshow(img2,[]);
-
-a = double (img2);
-a(a==a(1))= nan;
-amx = max(a(:));
-a = a/amx;
-figure(29);
-imshow(a,[]);
-
-se = strel('disk',2);
+se = strel('disk',4);
 img2=imdilate(img2,se);
 
 imwrite(img2,[pathname,'dleft_Seg_Reg.png']);
@@ -233,11 +185,8 @@ img5=uint8((-1*double(img4))+255);
 img2=img1;
 
 img2(imgnovo(:,:)==1)=65535;
-
 img2(1:lineA+10,:)=65535;
 img2(lineB+10:end,:)=65535;
-figure()
-imshow(img2);
 imgnovo=~imgnovo;
 imgnovo(1:lineA+10,:)=0;
 imgnovo(lineB+10:end,:)=0;
@@ -262,17 +211,10 @@ dd = conv2(img3,nkernel);
 [m,n] = size(dd);
 right = zeros(m,n);
 right(:,1:yyd) = dd(:,1:yyd);
-figure(90);
-imshow(right,[]);
 rightmask = ((right.*(right>-200))-((right.*(right>-40)).*(right<40)))~=0;
-figure(91);
-imshow(rightmask,[]);
 %%
 se = strel('disk',3);
 rightmask=imdilate(rightmask,se);
-figure(10);
-imshow(rightmask,[]);
-
 for i=yyd:-1:1
     if(rightmask(lineB-20,i)==1)
         pontod2=i;
@@ -280,8 +222,6 @@ for i=yyd:-1:1
     end
 end
 J1=regiongrowing(rightmask,lineB-20,pontod2);
-figure(11);
-imshow(J1,[]);
 stats1=regionprops(J1,'Extrema');
 cantosuperiorEsquerdo=[stats1.Extrema(1,1),stats1.Extrema(1,2)];
 cnt1=zeros(M,1);
@@ -311,19 +251,7 @@ for j=inicio2:-1:1
     end
 end
 img10(imgnovo()==1)=65535;
-
 img2=img10;
-figure()
-imshow(img2,[]);
-
-a = double (img2);
-a(a==a(1))= nan;
-amx = max(a(:));
-a = a/amx;
-figure(29);
-imshow(a,[]);
-
-se = strel('disk',2);
+se = strel('disk',4);
 img2=imdilate(img2,se);
-
 imwrite(img2,[pathname,'dright_Seg_Reg.png']);
