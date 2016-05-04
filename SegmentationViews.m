@@ -72,8 +72,8 @@ img10=img1;
 img10(lineB:end,:)=65535;
 
 img10=removeArms(img10,img4,imgnovo,lineB,lineA);
-se = strel('disk',4);
-img10=imdilate(img10,se);
+% se = strel('disk',4);
+% img10=imdilate(img10,se);
 imwrite(img10,[pathname,'dfrontal_Seg_Reg.png']);
 %% Full frontal
 img4=uint8(times(double(img2),~imgnovo)+(imgnovo*255));
@@ -81,8 +81,8 @@ img3=img1;
 img3(img4(:,:)==255)=0;
 
 img10=removeArms(img1,double(img3),imgnovo,lineB,lineA);
-se = strel('disk',4);
-img10=imdilate(img10,se);
+% se = strel('disk',4);
+% img10=imdilate(img10,se);
 imwrite(img10,[pathname,'dfrontal_Seg_Full.png']);
 %% Get Depth Image File
 lineA=lineA+10;
@@ -165,8 +165,8 @@ for j=inicio2:N
 end
 img10(imgnovo()==1)=65535;
 img2=img10;
-se = strel('disk',4);
-img2=imdilate(img2,se);
+% se = strel('disk',4);
+% img2=imdilate(img2,se);
 
 imwrite(img2,[pathname,'dleft_Seg_Reg.png']);
 %% Get Depth Image File
@@ -252,6 +252,6 @@ for j=inicio2:-1:1
 end
 img10(imgnovo()==1)=65535;
 img2=img10;
-se = strel('disk',4);
-img2=imdilate(img2,se);
+% se = strel('disk',4);
+% img2=imdilate(img2,se);
 imwrite(img2,[pathname,'dright_Seg_Reg.png']);
