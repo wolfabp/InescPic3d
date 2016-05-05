@@ -148,10 +148,10 @@ function [posL1,posF1,posR1,posL2,posF2,posR2]= SelectViews(s1,plotOption)
     h=fspecial('gaussian',[1 100],10);
     measurements(:,2)=imfilter(measurements(:,2),h');
 %         measurements(:,2)=smooth(measurements(:,2),0.05,'moving');
+    valormedio=mean(measurements(:,2));
     if(plotOption==1)
         figure(20);
         hold on;
-        valormedio=mean(measurements(:,2));
 %         arraymedio=zeros(tamanho);
 %         arraymedio(:)=valormedio;
         plot(1:1:tamanho,valormedio);
